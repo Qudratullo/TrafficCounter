@@ -5,26 +5,31 @@ import com.example.trafficcounter.utils.Generator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@DataJpaTest
+@Transactional
 class TrafficEventRepositoryTest {
     @Autowired
     private TrafficEventRepository repository;
 
     @Test
     void create() {
+        LocalDateTime nowTime = LocalDateTime.now();
         TrafficEvent trafficEvent = TrafficEvent.create(Generator.randomString(), Generator.randomString());
 
-        repository.save(trafficEvent);
+        repository.saveAndFlush(trafficEvent);
 
         assertNotNull(trafficEvent.getId());
         Optional<TrafficEvent> optionalTrafficEvent = repository.findById(trafficEvent.getId());
         assertTrue(optionalTrafficEvent.isPresent());
         assertEquals(trafficEvent, optionalTrafficEvent.get());
+        System.out.println(trafficEvent.getTime());
+        assertTrue(nowTime.plusMinutes(1).isAfter(trafficEvent.getTime()));
     }
 }

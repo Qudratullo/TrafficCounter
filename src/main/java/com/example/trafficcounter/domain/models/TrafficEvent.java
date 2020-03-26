@@ -1,9 +1,6 @@
 package com.example.trafficcounter.domain.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -15,16 +12,17 @@ public class TrafficEvent {
 
     private String userIdentifier;
     private String pageIdentifier;
+
+    @Column(columnDefinition = "DATETIME(6)")
     private LocalDateTime time;
 
-    private TrafficEvent(String userIdentifier, String pageIdentifier) {
-        this.userIdentifier = userIdentifier;
-        this.pageIdentifier = pageIdentifier;
-        this.time = LocalDateTime.now();
-    }
-
     public static TrafficEvent create(String userIdentifier, String pageIdentifier) {
-        return new TrafficEvent(userIdentifier, pageIdentifier);
+        TrafficEvent event = new TrafficEvent();
+        event.userIdentifier = userIdentifier;
+        event.pageIdentifier = pageIdentifier;
+        event.time = LocalDateTime.now();
+
+        return event;
     }
 
     public Long getId() {
@@ -51,7 +49,7 @@ public class TrafficEvent {
         return Objects.equals(id, that.id) &&
                 Objects.equals(userIdentifier, that.userIdentifier) &&
                 Objects.equals(pageIdentifier, that.pageIdentifier) &&
-                Objects.equals(time, that.time);
+                time.isEqual(that.time);
     }
 
     @Override
