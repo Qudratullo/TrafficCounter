@@ -13,12 +13,12 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@Transactional
 class TrafficEventRepositoryTest {
     @Autowired
     private TrafficEventRepository repository;
 
     @Test
+    @Transactional
     void create() {
         LocalDateTime nowTime = LocalDateTime.now();
         TrafficEvent trafficEvent = TrafficEvent.create(Generator.randomString(), Generator.randomString());

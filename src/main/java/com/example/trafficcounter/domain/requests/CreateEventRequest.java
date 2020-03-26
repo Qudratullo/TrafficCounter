@@ -4,13 +4,11 @@ public class CreateEventRequest {
     private String userIdentifier;
     private String pageIdentifier;
 
-    private CreateEventRequest(String userIdentifier, String pageIdentifier) {
-        this.userIdentifier = userIdentifier;
-        this.pageIdentifier = pageIdentifier;
-    }
-
     public static CreateEventRequest create(String userIdentifier, String pageIdentifier) {
-        return new CreateEventRequest(userIdentifier, pageIdentifier);
+        CreateEventRequest request = new CreateEventRequest();
+        request.pageIdentifier = pageIdentifier;
+        request.userIdentifier = userIdentifier;
+        return request;
     }
 
     public String getUserIdentifier() {
