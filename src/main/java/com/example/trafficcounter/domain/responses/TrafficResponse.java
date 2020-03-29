@@ -1,23 +1,21 @@
 package com.example.trafficcounter.domain.responses;
 
 public class TrafficResponse {
+    private Long visitsCount;
     private Long visitorsCount;
-    private Long uniqueVisitorsCount;
 
-    private TrafficResponse(Long visitorsCount, Long uniqueVisitorsCount) {
-        this.visitorsCount = visitorsCount;
-        this.uniqueVisitorsCount = uniqueVisitorsCount;
+    public static TrafficResponse create(Long visitsCount, Long visitorsCount) {
+        TrafficResponse response = new TrafficResponse();
+        response.visitsCount = visitsCount;
+        response.visitorsCount = visitorsCount;
+        return response;
     }
 
-    public static TrafficResponse create(Long visitorsCount, Long uniqueVisitorsCount) {
-        return new TrafficResponse(visitorsCount, uniqueVisitorsCount);
+    public Long getVisitsCount() {
+        return visitsCount;
     }
 
     public Long getVisitorsCount() {
         return visitorsCount;
-    }
-
-    public Long getUniqueVisitorsCount() {
-        return uniqueVisitorsCount;
     }
 }

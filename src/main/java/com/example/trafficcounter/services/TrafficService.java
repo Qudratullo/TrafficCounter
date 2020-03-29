@@ -6,6 +6,9 @@ import com.example.trafficcounter.repositories.TrafficEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Service
 public class TrafficService {
 
@@ -18,6 +21,18 @@ public class TrafficService {
 
     public TrafficResponse createEvent(String pageIdentifier, String userIdentifier) {
         repository.save(TrafficEvent.create(userIdentifier, pageIdentifier));
-        return TrafficResponse.create(121L, 32L);
+        return buildTrafficResponse();
+    }
+
+    private TrafficResponse buildTrafficResponse() {
+        LocalDateTime startTime = LocalDate.now().atStartOfDay();
+        LocalDateTime endTime = LocalDate.now().plusDays(1).atStartOfDay();
+
+        String statisticsString = repository.getStatistics(startTime, endTime);
+
+        String[] strings = statisticsString.split(",");
+        Long countEvents = Long.parseLong(strings[0]);
+        Long countUsers = Long.parseLong(strings[1]);
+        return TrafficResponse.create(countEvents, countUsers);
     }
 }

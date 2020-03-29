@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -18,12 +18,11 @@ class TrafficEventRepositoryTest {
     private TrafficEventRepository repository;
 
     @Test
-    @Transactional
     void create() {
         LocalDateTime nowTime = LocalDateTime.now();
         TrafficEvent trafficEvent = TrafficEvent.create(Generator.randomString(), Generator.randomString());
 
-        repository.saveAndFlush(trafficEvent);
+        repository.save(trafficEvent);
 
         assertNotNull(trafficEvent.getId());
         Optional<TrafficEvent> optionalTrafficEvent = repository.findById(trafficEvent.getId());
@@ -31,5 +30,35 @@ class TrafficEventRepositoryTest {
         assertEquals(trafficEvent, optionalTrafficEvent.get());
         System.out.println(trafficEvent.getTime());
         assertTrue(nowTime.plusMinutes(1).isAfter(trafficEvent.getTime()));
+    }
+
+    @Test
+    void getStatistics() {
+        String firstUserId = Generator.randomString();
+        String secondUserId = Generator.randomString();
+        String thirdUserId = Generator.randomString();
+        createWithIdentifier(firstUserId);
+        createWithIdentifier(firstUserId);
+        createWithIdentifier(firstUserId);
+        createWithIdentifier(secondUserId);
+        createWithIdentifier(secondUserId);
+        createWithIdentifier(thirdUserId);
+
+        LocalDateTime startTime = LocalDate.now().atStartOfDay();
+        LocalDateTime endTime = LocalDate.now().plusDays(1).atStartOfDay();
+
+        String statisticsString = repository.getStatistics(startTime, endTime);
+        String[] strings = statisticsString.split(",");
+        Long countEvents = Long.parseLong(strings[0]);
+        Long countUsers = Long.parseLong(strings[1]);
+
+        assertEquals(6, countEvents);
+        assertEquals(3, countUsers);
+    }
+
+    private TrafficEvent createWithIdentifier(String userIdentifier) {
+        TrafficEvent trafficEvent = TrafficEvent.create(userIdentifier, Generator.randomString());
+        repository.save(trafficEvent);
+        return trafficEvent;
     }
 }
